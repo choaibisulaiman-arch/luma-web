@@ -1,0 +1,195 @@
+<!-- LUMA - Single-file demo website (index.html)
+     - Impact counter stored in localStorage for demo
+     - QR code image auto-generated using Google Chart API (points to page URL)
+     - Replace / deploy to a public URL to make the QR usable worldwide
+-->
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LUMA — Agua que da vida</title>
+  <meta name="description" content="LUMA: cada gota cambia una vida. Por cada litro vendido, donamos agua a comunidades sin acceso seguro." />
+  <style>
+    :root{
+      --bg1:#e6f7fb; /* very light blue */
+      --bg2:#dff6ef; /* mint */
+      --accent:#3e8f8a; /* teal */
+      --muted:#6b8b8a;
+      --card:#ffffffcc;
+      --maxw:980px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--muted);display:flex;justify-content:center;padding:32px}
+    .wrap{width:100%;max-width:var(--maxw)}
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:transparent}
+    .brand{display:flex;align-items:center;gap:16px}
+    .logo{font-weight:700;font-size:36px;color:var(--accent);letter-spacing:2px}
+    .tag{font-size:14px;color:var(--muted)}
+
+    .hero{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:center;margin-top:12px}
+    .card{background:var(--card);padding:26px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+
+    .hero-left h1{margin:0;font-size:28px;color:var(--accent)}
+    .hero-left p{margin:12px 0 18px;font-size:15px;line-height:1.45}
+
+    .impact{display:flex;flex-direction:column;align-items:center;gap:14px}
+    .counter{font-size:48px;font-weight:700;color:var(--accent)}
+    .counter-sub{font-size:13px;color:var(--muted)}
+    .btn{background:transparent;border:2px solid var(--accent);padding:10px 14px;border-radius:10px;font-weight:600;color:var(--accent);cursor:pointer}
+    .small{font-size:13px}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+    .note{font-size:13px;color:var(--muted)}
+
+    footer{margin-top:18px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+
+    /* QR area */
+    .qr-wrap{text-align:center}
+    .qr-wrap img{width:180px;height:180px;border-radius:8px;background:#fff;padding:8px}
+    .qr-caption{font-size:13px;margin-top:8px;color:var(--muted)}
+
+    @media (max-width:860px){
+      .hero{grid-template-columns:1fr;}
+      .qr-wrap img{width:150px;height:150px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">LUMA</div>
+        <div class="tag">Cada gota cambia una vida</div>
+      </div>
+      <div class="tag small">Botella 1.5 L — 1,70 € • 100% reciclado • Pirineos</div>
+    </header>
+
+    <div class="hero">
+      <div class="card hero-left">
+        <h1>No es solo un agua
+        </h1>
+        <p>
+          LUMA nace en los Pirineos con una misión sencilla: por cada litro vendido, destinamos agua
+          equivalente a comunidades sin acceso seguro. Botellas hechas con materiales reciclados y
+          procesos de bajo impacto.
+        </p>
+
+        <div class="grid">
+          <div>
+            <strong>Nuestro propósito</strong>
+            <p class="note">Trabajamos con ONG locales para canalizar donaciones y asegurar que el agua llegue a quienes más la necesitan.</p>
+          </div>
+          <div>
+            <strong>Sostenibilidad</strong>
+            <p class="note">Envase 100% reciclado, etiqueta con tintas ecológicas y procesos energéticos optimizados.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <strong>Cómo funciona</strong>
+          <p class="note">Cada botella (1,5 L) se contabiliza y la organización asociada convierte esa compra en litros de agua potable para comunidades vulnerables.</p>
+        </div>
+
+      </div>
+
+      <div class="card qr-panel">
+        <div class="impact">
+          <div class="counter" id="impactCounter">0</div>
+          <div class="counter-sub">Personas ayudadas (simulado)</div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn" id="reportBtn">He comprado una botella</button>
+            <button class="btn" id="resetBtn" style="border-color:#e1a; color:#e16;">Reset demo</button>
+          </div>
+
+          <div style="width:100%;margin-top:8px;text-align:center">
+            <input id="addInput" type="number" min="1" placeholder="Añadir número" style="width:140px;padding:8px;border-radius:8px;border:1px solid #ddd"> 
+            <button class="btn" id="addBtn">Registrar</button>
+          </div>
+
+          <div class="qr-wrap" style="margin-top:12px">
+            <!-- QR points to current page URL by default. When you deploy this page publicly, the QR will link to that public URL. -->
+            <img id="qrImg" alt="QR LUMA" src="" />
+            <div class="qr-caption">Escanea para ver el impacto en tu móvil</div>
+          </div>
+
+          <div class="note" style="margin-top:10px;text-align:center">(Demo local: el contador se guarda en tu navegador. Para un contador global, ver instrucciones de despliegue abajo.)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer>
+      <div>© LUMA — Agua de los Pirineos</div>
+      <div class="note">Precio sugerido: 1,70 € por 1,5L • Material reciclado</div>
+    </footer>
+
+    <div style="margin-top:18px;padding:16px;background:rgba(255,255,255,0.9);border-radius:10px">
+      <strong>Instrucciones rápidas</strong>
+      <ol class="note">
+        <li>Guarda este archivo como <code>index.html</code>.</li>
+        <li>Para ver la web localmente, ábrelo en tu navegador (doble clic).</li>
+        <li>Para publicarlo: sube a GitHub y activa GitHub Pages o usa Netlify / Vercel. La URL pública será la que pongas en el QR.</li>
+        <li>El QR se genera automáticamente y apunta a la URL donde esté hospedada la página. Si lo despliegas en <em>https://ejemplo.com</em>, el QR irá a esa dirección.</li>
+        <li>Para un contador global (visible para todos los usuarios): conecta esta página a un servicio (Google Sheets + Apps Script o Firebase Realtime DB). Si quieres, te doy el código para cualquiera de las dos opciones.</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <script>
+    // Simple demo impact counter using localStorage
+    const KEY = 'luma_impact_demo_v1';
+    const impactEl = document.getElementById('impactCounter');
+    const reportBtn = document.getElementById('reportBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const addBtn = document.getElementById('addBtn');
+    const addInput = document.getElementById('addInput');
+
+    function getImpact(){
+      return Number(localStorage.getItem(KEY) || 0);
+    }
+    function setImpact(n){
+      localStorage.setItem(KEY,String(n));
+      render();
+    }
+    function render(){
+      impactEl.textContent = getImpact().toLocaleString();
+    }
+
+    reportBtn.addEventListener('click',()=>{
+      // by default, each bottle -> we simulate "1 persona ayudada". Adjust as needed.
+      setImpact(getImpact()+1);
+    });
+    resetBtn.addEventListener('click',()=>{
+      if(confirm('Resetear contador demo en este navegador?')){ setImpact(0); }
+    });
+    addBtn.addEventListener('click',()=>{
+      const v = Number(addInput.value)||0;
+      if(v>0){ setImpact(getImpact()+v); addInput.value=''; }
+    });
+
+    // QR generator: uses Google Chart API to create a QR linking to the page URL.
+    // When you deploy publicly the QR will point to the public URL.
+    const qrImg = document.getElementById('qrImg');
+    function updateQR(){
+      const url = location.href; // when deployed, this will be the public URL
+      const encoded = encodeURIComponent(url);
+      const size = 400;
+      // Google Chart API QR generator (works as a quick solution)
+      const qrSrc = `https://chart.googleapis.com/chart?chs=${size}x${size}&cht=qr&chl=${encoded}&choe=UTF-8`;
+      qrImg.src = qrSrc;
+    }
+
+    // init
+    if(!localStorage.getItem(KEY)) localStorage.setItem(KEY,'0');
+    render();
+    updateQR();
+
+    // If the page is loaded on a file:// URL, QR will point to that. After deployment it will auto-update.
+  </script>
+</body>
+</html>
